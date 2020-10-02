@@ -1,16 +1,20 @@
 gawdis
 ======
 
-'gawdis' is part of Towards a more balanced combination of multiple traits when computing functional differences between species (under review in MEE).
+**gawdis** is part of manuscript *Towards a more balanced combination of multiple traits when computing functional differences between species* by Francesco de Bello, Zoltan Botta-Dukat, Jan Leps & Pavel Fibich (under review in MEE).
 
-'gawdis' R package provides 'gawdis' function to produce multi-trait dissimilarity with more uniform contributions of different traits. The approach is based on minimizing the differences in the correlation between the dissimilarity of each trait, or groups of traits, and the multi-trait dissimilarity. This is done using either an analytical or a numerical solution, both available in the function.
+**gawdis** R package provides 'gawdis' function to produce multi-trait dissimilarity with more uniform contributions of different traits. The approach is based on minimizing the differences in the correlation between the dissimilarity of each trait, or groups of traits, and the multi-trait dissimilarity. This is done using either an analytical or a numerical solution, both available in the function.
 
-TRADER will be available on CRAN https://cran.r-project.org/web/packages/gawdis you just need
+**gawdis** will be available on CRAN https://cran.r-project.org/web/packages/gawdis you just need
 
- install.packages("gawdis")
+```install.packages("gawdis")```
 
-and then run it similarly as gowdis from FD package (https://cran.r-project.org/web/packages/FD) .
+and then run it similarly as gowdis from FD package (https://cran.r-project.org/web/packages/FD).
 
+Examples
+======
+
+```
   bodysize<-c(10, 20, 30, 40, 50, NA, 70)
   carnivory<-c(1, 1, 0, 1, 0,1, 0)
   red<-c(1, 0, 0.5, 0, 0.2, 0, 1)
@@ -35,5 +39,5 @@ and then run it similarly as gowdis from FD package (https://cran.r-project.org/
   
   x=tall; w.type="equal"; groups =c(1, 2, 3, 3, 3); fuzzy=TRUE
   gawdis(tall, w.type="equal", groups =c(1, 2, 3, 3, 3), fuzzy=TRUE)
-  
+```  
 
