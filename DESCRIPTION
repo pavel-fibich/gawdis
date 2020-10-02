@@ -1,0 +1,12 @@
+Package: gawdis
+Type: Package
+Title: Multi-trait dissimilarity with more uniform contributions of different traits
+Version: 0.1.0
+Author: Pavel Fibich <pavel.fibich@prf.jcu.cz>, Francesco de Bello <fradebel@ext.uv.es>, Zoltan Botta-Dukat <botta-dukat.zoltan@okologia.mta.hu>, Jan Leps <suspa@prf.jcu.cz>
+Maintainer: Pavel Fibich <pavel.fibich@prf.jcu.cz>
+Description: gawdis R function to produce multi-trait dissimilarity with more uniform contributions of different traits. The approach is based on minimizing the differences in the correlation between the dissimilarity of each trait, or groups of traits, and the multi-trait dissimilarity. This is done using either an analytical or a numerical solution, both available in the function.
+License: GPL-2 | GPL-3
+Encoding: UTF-8
+LazyData: true
+URL: https://github.com/pavel-fibich/gawdis
+Imports: FD
