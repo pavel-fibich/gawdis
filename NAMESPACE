@@ -1,2 +1,4 @@
 exportPattern("^[[:alpha:]]+")
 import(FD)
+import(GA)
+importFrom("stats", "as.dist", "cor", "dist", "sd")

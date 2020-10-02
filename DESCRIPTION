@@ -9,4 +9,5 @@ License: GPL-2 | GPL-3
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/pavel-fibich/gawdis
-Imports: FD
+Depends: FD, GA
+RoxygenNote: 7.1.1

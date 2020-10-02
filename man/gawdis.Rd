@@ -70,10 +70,13 @@ attr(ex1.gaw1, "correls")#correlation of single-trait dissimilarity with multi-t
 #this can be done in two ways: analytic=using formulas; optimized=using iterations#
 #both approaches give very similar results but only the latter can work with NAs#
 #for the sake of comparisons here NAs are removed#
-analytical<-gawdis(dummy$trait[,c(2,4,6,8)], w.type ="analytic") #it is not needed to add the argument w.type, this is the approach used by default if not defined#
+analytical<-gawdis(dummy$trait[,c(2,4,6,8)], w.type ="analytic")
+#it is not needed to add the argument w.type, this is the approach used by default if not defined#
 attr(analytical, "correls")
 attr(analytical, "weights") #weights finally given to traits
-iteractions<-gawdis(dummy$trait[,c(2,4,6,8)], w.type ="optimized", opti.maxiter=100)# here we used 'only' 100 iterations, to speed up the process and because with such few species this is likely more than enough#
+iteractions<-gawdis(dummy$trait[,c(2,4,6,8)], w.type ="optimized", opti.maxiter=100)
+# here we used 'only' 100 iterations, to speed up the process and because with such few species
+# this is likely more than enough#
 attr(iteractions, "correls")
 attr(iteractions, "weights")
 plot(analytical, iteractions); abline(0, 1)
@@ -84,19 +87,24 @@ head(tussock$trait)
 head(tussock$trait[, 3:7])
 cor(tussock$trait[, 3:7], use = "complete")
 #select fewer traits and log-transform when needed#
-tussock.trait<-tussock$trait[, c("height", "LDMC", "leafN","leafS", "leafP", "SLA", "seedmass", "raunkiaer", "pollination", "clonality", "growthform")]
-tussock.trait.log<-tussock.trait#some traits needed log-tranformation, just creating a matrix to store the new data
+tussock.trait<-tussock$trait[, c("height", "LDMC", "leafN","leafS", "leafP", "SLA",
+"seedmass", "raunkiaer", "pollination", "clonality", "growthform")]
+tussock.trait.log<-tussock.trait#some traits needed log-tranformation, just creating
+# a matrix to store the new data
 tussock.trait.log$height<-log(tussock.trait$height)
 tussock.trait.log$seedmass<-log(tussock.trait$seedmass)
 tussock.trait.log$leafS<-log(tussock.trait$leafS)
 colnames(tussock.trait.log)
 #run the function and test trait contributions#
 gaw.groups<-gawdis(tussock.trait.log, w.type = "optimized", opti.maxiter = 300,
-                   groups.weight=T, groups = c(1,2, 2, 2, 2, 2, 3, 4, 5, 6, 7))#there are NAs so the iteration approach is the only possible
+                   groups.weight=TRUE, groups = c(1,2, 2, 2, 2, 2, 3, 4, 5, 6, 7))
+                   #there are NAs so the iteration approach is the only possible
 cors.gaw.gr<-attr(gaw.groups,"correls")
 cors.gaw.gr[12]<-attr(gaw.groups,"group.correls")[2]
 names(cors.gaw.gr)[12]<-"leaves"
-cors.gaw.gr#correlation of single traits dissimilarity, including all leaf traits together ("leaves") with multi-trait dissimilarity
+cors.gaw.gr
+#correlation of single traits dissimilarity,
+#including all leaf traits together ("leaves") with multi-trait dissimilarity
 
 #the function can be used also for fuzzy coded/dummy variables traits#
 #let's create some data#
