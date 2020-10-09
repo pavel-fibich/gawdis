@@ -34,7 +34,7 @@
 #' plot(ex1, ex1.gaw1); abline(0, 1)
 #' #but when doing so, some traits have stronger contribution on the multi-trait dissimilarity#
 #' #particularly factorial and binary traits#
-#' attr(ex1.gaw1, "correls")#correlation of single-trait dissimilarity with multi-trait one#
+#' attr(ex1.gaw1, "correls") #correlation of single-trait dissimilarity with multi-trait one#
 #'
 #' #the gawdis function finds the best weights to equalize trait contributions#
 #' #this can be done in two ways: analytic=using formulas; optimized=using iterations#
@@ -44,14 +44,15 @@
 #' #it is not needed to add the argument w.type, this is the approach used by default if not defined#
 #' attr(analytical, "correls")
 #' attr(analytical, "weights") #weights finally given to traits
-#' iteractions<-gawdis(dummy$trait[,c(2,4,6,8)], w.type ="optimized", opti.maxiter=100)
+#' iteractions<-gawdis(dummy$trait[,c(2,4,6,8)], w.type ="optimized", opti.maxiter=20)
 #' # here we used 'only' 100 iterations, to speed up the process and because with such few species
 #' # this is likely more than enough#
 #' attr(iteractions, "correls")
 #' attr(iteractions, "weights")
 #' plot(analytical, iteractions); abline(0, 1)
 #'
-#' #make groups, when there are traits that are either very much correlated or from the same organs#
+#' #make groups, when there are traits that are either very much correlated
+#' # or from the same organs#
 #' #example from the tussock dataset, with many leaf traits#
 #' head(tussock$trait)
 #' head(tussock$trait[, 3:7])
@@ -66,9 +67,9 @@
 #' tussock.trait.log$leafS<-log(tussock.trait$leafS)
 #' colnames(tussock.trait.log)
 #' #run the function and test trait contributions#
-#' gaw.groups<-gawdis(tussock.trait.log, w.type = "optimized", opti.maxiter = 300,
+#' #there are NAs so the iteration approach is the only possible
+#' gaw.groups<-gawdis(tussock.trait.log, w.type = "optimized", opti.maxiter = 100,
 #'                    groups.weight=TRUE, groups = c(1,2, 2, 2, 2, 2, 3, 4, 5, 6, 7))
-#'                    #there are NAs so the iteration approach is the only possible
 #' cors.gaw.gr<-attr(gaw.groups,"correls")
 #' cors.gaw.gr[12]<-attr(gaw.groups,"group.correls")[2]
 #' names(cors.gaw.gr)[12]<-"leaves"
