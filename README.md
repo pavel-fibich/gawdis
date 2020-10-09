@@ -15,6 +15,7 @@ Examples
 ======
 
 ```
+  library(TRADER)
   bodysize<-c(10, 20, 30, 40, 50, NA, 70)
   carnivory<-c(1, 1, 0, 1, 0,1, 0)
   red<-c(1, 0, 0.5, 0, 0.2, 0, 1)
