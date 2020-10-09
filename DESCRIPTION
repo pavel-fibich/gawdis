@@ -7,7 +7,11 @@ Maintainer: Pavel Fibich <pavel.fibich@prf.jcu.cz>
 Description: gawdis R function to produce multi-trait dissimilarity with more uniform contributions of different traits. The approach is based on minimizing the differences in the correlation between the dissimilarity of each trait, or groups of traits, and the multi-trait dissimilarity. This is done using either an analytical or a numerical solution, both available in the function.
 License: GPL-2 | GPL-3
 Encoding: UTF-8
-LazyData: true
-URL: https://github.com/pavel-fibich/gawdis
+BugReports: https://github.com/pavel-fibich/gawdis/issues
+URL: https://github.com/pavel-fibich/gawdis, https://cran.r-project.org/web/packages/gawdis
 Depends: FD, GA
 RoxygenNote: 7.1.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

@@ -20,7 +20,7 @@
 #' @return  Returns 'diss' as dissimilarity, weights as solution of GA, ga as GA, spedis as species distance.
 #' @examples
 #' library(FD)
-#' GAgawdis(dummy$trait)
+#' GAgawdis(dummy$trait,maxiter=20)
 #'
 GAgawdis<-function(tr=NULL, asym.bin = NULL, ord = "podani",
                   gr=NULL, gr.weight=FALSE, fuzzy=FALSE, getSpecDists=NULL, f=NULL, min.weight=0.001,max.weight=1,

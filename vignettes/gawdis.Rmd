@@ -1,0 +1,262 @@
+---
+title: "Guidelines for the function *gawdis*"
+author: "Francesco de Bello (fradebello@ext.uv.es)"
+date: "9.10.2020"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Introduction
+In this step-by-step guide we will look how the function `gawdis` works and to apply it using simple data (either available in the FD package or made up below). The function `gawdis`, designed by Pavel Fibich, is an extension of the classic function `gowdis` in the package FD (Laliberté, Legendre and Shipley 2014). The function computes dissimilarity between units, usually species, based on multiple types of variables (e.g. quantitative, categorical etc.), usually species' traits. Hence it can normally be applied to compute multi-trait dissimilarity between species in functional trait ecology studies, but it can be used in other applications as well. The dissimilarity obtained can be computed in order to attain a quasi-identical contribution of individual variables (e.g. traits) or group of associated variables (on variables reflecting similar information, e.g. multiple leaf traits). The dissimilarity is computed by either an analytical approach or through iterations. The function borrows several arguments from `gowdis`, with additional ones described below. This includes the option to consider fuzzy and dummy variables (e.g. multiple columns defining a single trait). 
+
+Let's first load functions. 
+
+### Loading functions
+We will now open the package FD, which you should install on your computer, and the object "gawdis.R" which contains the function `gawdis`. Remember to have the file "gawdis.R" in your working directory!
+
+```{r}
+library(gawdis)
+```
+
+### The Gower distance
+We will start now by looking what the function does, overall. To do this let's first look at the original function `gawdis` with the data `dummy$trait`, which includes invented data for few species and their traits, available in the FD package (gawdis source the FD package).
+
+```{r}
+dummy$trait
+ex1 <- gowdis(dummy$trait)
+round(ex1, 3)##just to see only 3 decimals, enough
+class(ex1)
+```
+
+The data `dummy$trait` include trait information for 8 species. Some traits are numerical (num1 and num2), some are categorical, i.e. factors (fac1 and fac2, nice names btw.), some semi-quantitative traits, i.e. ordinal traits (ord1 and ord2) and some binary traits (bin1 and bin2). Some traits have NA values. The function `gawdis` computes the dissimilarity between the 8 species in the `dummy$trait`, based on all traits available. The function returns a 'triangular' distance object, of class `dist`, which express the (multi-traits) dissimilarity between each pair of species. Value are a scaled between 0 (species are exactly the same) and 1 (species are completely different). 
+
+Let's make even a simpler example, by taking only two traits (num2 and bin2) without NA. Let's see exactly what `gawdis` is doing. First a dissimilarity is computed for each trait. For the *quantitative trait* the differences in values between each pair of species are scaled to a maximum value 1, by dividing the dissimilarity values to the maximum possible difference for this trait. For example, when we looked at `dummy$trait` above, we would see that the sp6 had the highest value for num2 (i.e. 8.5) and sp7 had the lowest (i.e. 2.1). The difference between these two species will be equal to 1. 
+For *binary trait* (e.g. if a species fly or not, 1 vs. 0), the maximum value is 1, so that there is no need to make such a standardization. Finally, the dissimilarity of the two traits is simply the *average of the distances for each individual trait*. 
+
+```{r}
+distance.num2<-dist(dummy$trait[, "num2", drop=F])/max(dist(dummy$trait$num2))#note the drop=F not to loose the species names in the process#
+round(distance.num2, 3)
+distance.bin2<-dist(dummy$trait$bin2)
+distance.bin2
+distance.twotraits.byhand<-(distance.num2+distance.bin2)/2
+distance.twotraits.gowdis<-gowdis(dummy$trait[, c("num2", "bin2")])
+plot(distance.twotraits.gowdis, distance.twotraits.byhand)
+abline(0, 1)
+```
+
+These simple steps show what the function `gawdis` does "automatically" for us. Notice that, for the categorical trait the process is similar as for the binary traits. If the species belong to the same category, then the dissimilarity=0, if they belong to different categories, then the dissimilarity=1. For example:
+
+```{r}
+dummy$trait$fac2
+gowdis(dummy$trait[, "fac2", drop=F])#notice that gowdis wants a matrix, not a vector, here a simple solution to solve this and keep species names
+```
+
+You can see that sp1 and sp2 have different categories (X and Z), so the dissimilarity is=1. 
+
+
+### Traits contribution and trait weight###
+Let's now see why we actually need the new function `gawdis`, in addition to the traditional `gowdis`. In the example above `distance.twotraits.gowdis` reflects the dissimilarity of both traits, i.e. multi-trait dissimilarity, while `distance.num2` and `distance.bin2` reflect the dissimilarity for individual traits. What is the *contribution* of each single trait to the multi-trait dissimilarity? how much each single trait contribute to the final multi-trait dissimilarity? to answer this we can do, for example, a correlation between the multi-trait dissimilarity with the individual trait dissimilarity:
+
+```{r}
+cor(distance.twotraits.gowdis, distance.num2)
+cor(distance.twotraits.gowdis, distance.bin2)
+```
+
+This tells you how much the multi-trait dissimilarity reflects the information of each individual trait. If we look at this example we can see that the binary trait (bin2) is much more correlated to the multi-trait dissimilarity than the quantitative trait (num2), Pearson R=0.89 for the binary trait and R=0.51 for the quantitative. This means that the *contribution* of the binary trait is much much greater than of the quantitative trait. By the way, categorical/nominal traits will work similarly to binary traits, in general terms. 
+
+Are we happy with this result? are we happy that when we combine different variables (traits in this case), the multivariable dissimilarity has a far greater contribution from some variables? We think it is rather fair to say that this is not an ideal solution. Luckily the `gawdis` has an useful argument `w`, or *weight* which we can use to modify the contribution of each trait. Remember that the multi-trait dissimilarity is, by default with `gawdis`, a simple average of the dissimilarity from individual traits. Instead of doing a simple average, we could do a *weighted average*, in which some traits could have bigger weights. For example, we could reduce to the weight of the binary trait, to reduce its contribution to the multi-trait dissimilarity, and increase the one for the quantitative trait. In the next lines we show how this can be done "by hand" or we could be using directly the argument `w` in `gowdis` (notice that we are trying, to start with, to give twice the weight to the binary trait, compared to the quantitative one). See both options below:
+
+```{r}
+distance.twotraits.byhand.weighted<-0.67*(distance.num2)+0.33*(distance.bin2)
+distance.twotraits.gowdis.weighted<-gowdis(dummy$trait[, c("num2", "bin2")], w=c(2, 1))
+plot(distance.twotraits.byhand.weighted, distance.twotraits.gowdis.weighted)
+abline(0, 1)
+```
+
+By doing this the new multi-trait dissimilarity will be more evenly affected by each trait. 
+
+```{r}
+cor(distance.twotraits.gowdis.weighted, distance.num2)
+cor(distance.twotraits.gowdis.weighted, distance.bin2)
+```
+
+Specifically the Pearson correlation is R=0.74 for the binary trait and R=0.73 for the quantitative. This is quite even, good job! What we did is modifying the weight of each trait to modify their contribution to the multi-trait dissimilarity. Cool! But...how do we know which values we have to select for the argument `w` to allow all traits to have a similar weight? if we have only 2 traits maybe we can try various `w` values and hope to find some decent combination, and try until we find a decent combination. The thing gets more complicated if we have many traits. Moreover, as we show below there are also other cases more complicated cases. 
+
+
+### The function `gawdis`: basics###
+This is where the new function `gowdis` will get useful. The function looks for the best values for the `w` argument, to obtain an equal contribution of individual traits. 
+
+```{r}
+equalcont <- gawdis(dummy$trait[,c("num2", "bin2")])
+equalcont
+attr(equalcont,"correls")
+attr(equalcont,"weights")
+```
+
+In one step we have a computed a multi-trait dissimilarity in which the contribution of each trait (provided in output of the function, i.e. in "correls") are basically identical. This was done by finding an ideal `w` value for each trait (provided in the output of the function, "weights"). Notice that the values are very close to the 2:1 ratio we 'tried' above with `distance.twotraits.byhand.weighted` and `distance.twotraits.gowdis.weighted`). Actually we 'tried' those values because we knew what was already the solution, but otherwise we would have spent some time really trying multiple combinations. 
+
+Of course the function `gawdis` can also be used in the exact same way as the original `gowdis`. For example, if you recall the object `ex1` created above with `gowdis`, and copied again below, now we can do the same with `gowdis`, just telling that we want to have a similar weight (and hence different contribution) for the different traits. This is the defauls in `gowdis` and in `gawdis` this is set by either using  w.type ="equal" or by  w.type ="user" and then saying `W` is the same for all traits. 
+
+```{r, warning=FALSE}
+ex1 <- gowdis(dummy$trait)
+ex1.gaw1 <- gawdis(dummy$trait, w.type ="equal")
+ex1.gaw2 <- gawdis(dummy$trait, w.type ="user", W=rep(1, 8))
+plot(ex1, ex1.gaw1)
+abline(0, 1)
+plot(ex1, ex1.gaw2)
+abline(0, 1)
+```
+
+
+### The function `gawdis`: analytical vs. iterative approaches ###
+Now that we verified that `gawdis` works fine, let's see more more details about the function and its different applications. The solutions provided by the function can be obtained in two ways. The first one is by an analytical solution, using purely a mathematical formulas (see main paper and corresponding supplementary material). This is the approach used by default in the function, as we used to create the object `equalcont` above. In case of doubts, this approach can be set by using w.type="analytic". NOTE that unfortunately this solution cannot be used when there are missing values (NAs). 
+
+When there are NAs, even if you set the argument w.type ="analytic" the function will apply a second approach, based on iterations, i.e. it will keep trying several solutions until finding a good one (actually it is based on a fitness improving approach, which gradually improves the output of the results).  This will take some time, as multiple alternatives are tested sequentially. It can be obtained by using w.type ="optimized". The running time will depend, mostly, on the number of species and the number of iterations, which is set by the argument `opti.maxiter`, by default set to 300. Below we apply both approach to a subset of the `dummy$trait data`, without NAs
+
+```{r}
+analytical<-gawdis(dummy$trait[,c(2,4,6,8)], w.type ="analytic")# it is not needed to add the argument w.type, this is the approach used by default if not defined#
+attr(analytical, "correls")
+attr(analytical, "weights")
+iterations<-gawdis(dummy$trait[,c(2,4,6,8)], w.type ="optimized", opti.maxiter=100)# here we used 'only' 100 iterations, to speed up the process and because with such few species this is likely more than enough#
+attr(iterations, "correls")
+attr(iterations, "weights")
+plot(analytical, iterations)
+```
+
+Here you see some slight differences in the results, for example in terms of correlations between the dissimilarity of single traits and the multitrait (i.e. "correls") and the weights finally used for each trait ("weights"). The final results, the dissimilarity values displayed in the plot, also vary just a tiny bit. This is because the iterations are just based on a trial-error approach, which improves with more iterations, but it might "miss" the perfect mathematical solution, and just approach very close to it. Otherwise we can be quite confident that the results using the iteration tend quite well to the ideal results. 
+
+
+### The function `gawdis`: grouping traits ###
+In some cases the datasets we are considering have multiple variables which reflect some partially overlapping or redundant information. For example, many plant trait databases include a lot of leaf traits. This is the case, for example, of the dataset `tussock$trait`, also available in the FD package. Let's have a look:
+
+```{r}
+dim(tussock$trait)
+head(tussock$trait)
+head(tussock$trait[, 3:7])
+cor(tussock$trait[, 3:7], use = "complete")
+```
+
+In the dataset there are 5 leaf traits, likely measured on the same leaves, and quite correlated between them. In this case we do suggest to create groups of traits, using the argument `groups`. Why it is so? the problem is that if many trait provide a similar information, actually all these leaf traits are very much correlated. So the information could become too prominent in the multi-trait dissimilarity. Let's see all this, with a step-by-step approach. Basically the same test can be found in the incoming publication de Bello et al. in Methods in Ecology and Evolution. 
+First we slightly reduce the number of traits, just for simplicity, and because the dataset included some very unbalanced categorical traits (with too few entries for a number of categories). Then we need to log-transform some of the quantitative traits, and previously we checked that height, seedmass and leafS were the one needing log-transformation. NOTE that, by the way, that if we do not use log-transformation is applied trait with abnormal trait distribution will have bigger contribution, simply because they have greater variance (see Pavoine et al. 2009 Oikos).   
+
+```{r}
+tussock.trait<-tussock$trait[, c("height", "LDMC", "leafN","leafS", "leafP", "SLA", "seedmass", "raunkiaer", "pollination", "clonality", "growthform")]
+tussock.trait.log<-tussock.trait#some traits needed log-tranformation, just creating a matrix to store the new data
+tussock.trait.log$height<-log(tussock.trait$height)
+tussock.trait.log$seedmass<-log(tussock.trait$seedmass)
+tussock.trait.log$leafS<-log(tussock.trait$leafS)
+colnames(tussock.trait.log)
+```
+
+Let's first compute the simple Gower distance with `gowdis`. We we will also compute the dissimilarity only on leaf traits and correlate it to the multi-trait dissimilarity:
+
+```{r}
+#straightgowdis<-gowdis(tussock.trait.log)
+straightgowdis.2<-gawdis(tussock.trait.log, w.type = "equal", silent = T)#we compute 'normal' gower with the new function because it provides more results
+#plot(straightgowdis, straightgowdis.2)# if you want to check that the results are the same
+cors.gow<-attr(straightgowdis.2,"correls")
+cors.gow[12]<-mantel(straightgowdis.2, gowdis(tussock.trait.log[, 2:6]), na.rm=T)$statistic
+names(cors.gow)[12]<-"leaves"
+cors.gow
+```
+
+We can see that the `heightest` contribution (across the `cors.gow` values) were obtained for a categorical traits, raunkier life form and the combination of leaf traits ('leaves'). This is simply because with w.type = "equal" the multi-trait dissimilarity is an average of the dissimilarity for single traits, so leaf traits are represented 5/11 times in this average, a disproportional effect with respect to other traits, right? We could say that, although there are differences between the leaf traits, they are the same TYPE of trait, counted 5 times, when combining the traits. 
+
+The problem is not solved by using PCoA analyses, as suggested by the current literature (with the idea to reduce the number of traits and synthesize correlated traits into some multivariate axis). Here is a clear example:
+
+```{r}
+testpcoa<-dbFD(cailliez(straightgowdis.2), tussock$abun)###checking how many PCoA axes are retained
+pcoaaxes<-dudi.pco(cailliez(straightgowdis.2), scannf = FALSE, nf = 11)
+gowdis.PCoA<-dist(pcoaaxes$li)
+sum(pcoaaxes$eig[1:11])/sum(pcoaaxes$eig)#how much variability the axes explain
+#contribution of traits on the combined dissimilarity, done by hand#
+cors.pcoa<-vector()
+for(i in 1:dim(tussock.trait.log)[2]){
+  cors.pcoa[i]<-mantel(gowdis.PCoA, gowdis(as.data.frame(tussock.trait.log[, i])), na.rm=T)$statistic
+}
+cors.pcoa[12]<-mantel(gowdis.PCoA, gowdis(tussock.trait.log[, 2:6]), na.rm=T)$statistic
+names(cors.pcoa)<-c(colnames(tussock.trait.log), "leaves")#contributions of traits to the overall multi-trait dissimilarity
+cors.pcoa
+```
+
+Let's just, for simplicity, focus only on the final result of this part. If we look at the object `cors.pcoa` we can see very similar contribution of traits, as obtained with the previous approach `cors.gow`. So, in very simplified terms, the PCoA approach does not help very much to solve the case of many redundant/correlated traits, as the correlated traits still have, altogether, a superior contribution to the overall multi-trait dissimilarity. 
+
+The function `gawdis` could help, but only if we define groups. If we do not, let's see what happen:
+
+```{r}
+gaw.nogroups<-gawdis(tussock.trait.log, w.type = "optimized", opti.maxiter = 300)#there are NAs so the iteration approach is the only possible
+cors.gaw<-attr(gaw.nogroups,"correls")
+cors.gaw[12]<-mantel(gaw.nogroups, gowdis(as.data.frame(tussock.trait.log[, 2:6])), na.rm=T)$statistic
+names(cors.gaw)[12]<-"leaves"
+cors.gaw
+```
+
+Now, if we look at the `cors.gaw`, we can see the function, apparently, successfully accomplished its mission to obtain a quasi-equal contribution of each single trait. But, the solution provided this is not a good solution neither, because leaves, altogether, have a much bigger contribution that other traits (0.54 while other traits are around ~0.41). Again, the function considered each leaf trait separately, so that altogether leaf traits will have a greater contribution. 
+
+A better solution can be obtained by saying that all leaf traits belong to a given group. Thus `gawdis` will first compute a dissimilarity for all leaf traits together and then try to get for this leaf-combined dissimilarity the same weight as for other traits. Let's see it:
+
+```{r}
+colnames(tussock.trait.log)
+gaw.groups<-gawdis(tussock.trait.log, w.type = "optimized", opti.maxiter = 300, groups.weight=T, groups = c(1,2, 2, 2, 2, 2, 3, 4, 5, 6, 7))#there are NAs so the iteration approach is the only possible
+cors.gaw.gr<-attr(gaw.groups,"correls")
+cors.gaw.gr[12]<-attr(gaw.groups,"group.correls")[2]
+names(cors.gaw.gr)[12]<-"leaves"
+cors.gaw.gr
+```
+
+Now if we look at the `cors.gaw.gr` we can see single leaf traits have lower contribution than other traits, but in combination (leaves), they have a comparable contribution! Of course it will be difficult to decide when and in which case group of traits should be defined. But we think that if traits are measured in the same organ and provide, to a good extent, some overlapping information, then they should be considered as a group.
+
+
+### The function `gawdis`: fuzzing coding and dummy variables ###
+The function `gawdis` can be also useful in the case of traits coded as dummy variables or, as a specific case of this, as fuzzy variables. Let's first create this new trait matrix, `tall`. 
+```{r}
+bodysize<-c(10, 20, 30, 40, 50, NA, 70)
+carnivory<-c(1, 1, 0, 1, 0,1, 0)
+red<-c(1, 0, 0.5, 0, 0.2, 0, 1)
+yellow<-c(0, 1, 0, 0, 0.3, 1, 0)
+blue<-c(0, 0, 0.5,1, 0.5, 0, 0)
+colors.fuzzy<-cbind(red, yellow, blue)
+names(bodysize)<-paste("sp", 1:7, sep="")
+names(carnivory)<-paste("sp", 1:7, sep="")
+rownames(colors.fuzzy)<-paste("sp", 1:7, sep="")
+tall<-as.data.frame(cbind(bodysize, carnivory, colors.fuzzy))
+tall
+```
+
+The object `tall` includes 3 traits for 7 species, `bodysize` (quantitative), `carnivory` (binary/categorical) and colour. The last one is represented by 3 columns, one for each basic colour (yellow, red, blue). For example the first species (sp1), is red, so it gets 1 in the the 'red' column and 0 in the others. This type of variables, defined by multiple columns is called dummy variable, and in this specific case fuzzy coding, because the value in each column can be different from 0 and 1, with the sum over the 3 columns being equal to 1. For more information see (https://www.univie.ac.at/arctictraits/traitspublic_fuzzyCoding.php, https://stattrek.com/multiple-regression/dummy-variables.aspx). 
+
+We surely cannot apply `gowdis` to this type of matrices, because the function will "think" there is a total of 5 traits, since the matrix contains 5 columns, and will treat each of the 3 columns for colours as independent traits, resulting in a higher contribution of this single trait. Moreover the function gets a bit 'crazy' with this type of variables. Let's see why. We can use, to start with, the function only on the colours traits:
+
+```{r}
+round(gowdis(tall[, 3:5]), 3)
+```
+
+We can appreciate that these results are not correct. Species 1 (sp1) was red, Species 2 was yellow. If for simplicity we think that each column means a completely different color, then we do expect the dissimilarity between these two species should be equal to 1. This was not the case. Similarly sp3 is half red and so the dissimilarity with sp1 should equal to 0.5. But this is not the case. What can we do to solve this? Do simply the following, i.e. divide the dissimilarity by the maximum dissimilarity value:
+
+```{r}
+round(gowdis(tall[, 3:5])/max(gowdis(tall[, 3:5])), 3)
+```
+
+So if we want to combine this trait (color, defined by 3 columns in the `tall`), we need first to compute the dissimilarity for color this way, and then combine it with the other traits, for example with an average. For example, if we want a simple average of the dissimilarity for the 3 traits:
+
+```{r}
+dissim.bodysize<-gowdis(tall[, "bodysize", drop=F])
+dissim.carnivory<-gowdis(tall[, "carnivory", drop=F])
+dissim.colour<-gowdis(tall[, 3:5])/max(gowdis(tall[, 3:5]))
+dall<-list(as.matrix(dissim.bodysize), as.matrix(dissim.carnivory), as.matrix(dissim.colour))
+mean.dissim.all<-as.dist(apply(simplify2array(dall), c(1, 2), mean, na.rm=T), 2)
+round(mean.dissim.all, 3)
+```
+
+This is all a bit time consuming to do it line by line. There is other function in the package 'ade4', i.e. the function `dist.ktab` (together with the associated functions `prep.fuzzy` and `ktab.list.df`). However this solution is quite time consuming as well, as it requires a number steps and coding lines (you can surely try, just in case). Ideally we can thus also solve this problem with the function `gawdis`, possibly in a simple way. The solution is obtained by defining all columns belonging to a given trait (like colors above) to a certain group, as we saw above and then setting the argument fuzzy=TRUE. Let's see this now.  
+
+```{r}
+gawdis(tall, w.type="equal", groups =c(1, 2, 3, 3, 3), fuzzy=TRUE)
+```
