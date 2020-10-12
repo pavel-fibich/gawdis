@@ -1,14 +1,14 @@
 Package: gawdis
 Type: Package
-Title: Multi-trait dissimilarity with more uniform contributions of different traits
+Title: Multi-Trait Dissimilarity with more Uniform Contributions of Different Traits
 Version: 0.1.0
-Author: Francesco de Bello <fradebel@ext.uv.es>, Zoltan Botta-Dukat <botta-dukat.zoltan@okologia.mta.hu>, Jan Leps <suspa@prf.jcu.cz>, Pavel Fibich <pavel.fibich@prf.jcu.cz>
+Author: Francesco de Bello <fradebel@ext.uv.es>, Zoltan Botta-Dukat, Jan Leps, Pavel Fibich
 Maintainer: Pavel Fibich <pavel.fibich@prf.jcu.cz>
-Description: gawdis R function to produce multi-trait dissimilarity with more uniform contributions of different traits. The approach is based on minimizing the differences in the correlation between the dissimilarity of each trait, or groups of traits, and the multi-trait dissimilarity. This is done using either an analytical or a numerical solution, both available in the function.
+Description: R function gawdis() produces multi-trait dissimilarity with more uniform contributions of different traits. The approach is based on minimizing the differences in the correlation between the dissimilarity of each trait, or groups of traits, and the multi-trait dissimilarity. This is done using either an analytic or a numerical solution, both available in the function.
 License: GPL-2 | GPL-3
 Encoding: UTF-8
 BugReports: https://github.com/pavel-fibich/gawdis/issues
-URL: https://github.com/pavel-fibich/gawdis, https://cran.r-project.org/web/packages/gawdis
+URL: https://github.com/pavel-fibich/gawdis
 Depends: FD, GA
 RoxygenNote: 7.1.1
 Suggests: 

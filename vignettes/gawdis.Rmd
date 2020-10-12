@@ -191,7 +191,7 @@ Let's just, for simplicity, focus only on the final result of this part. If we l
 The function `gawdis` could help, but only if we define groups. If we do not, let's see what happen:
 
 ```{r}
-gaw.nogroups<-gawdis(tussock.trait.log, w.type = "optimized", opti.maxiter = 300)#there are NAs so the iteration approach is the only possible
+gaw.nogroups<-gawdis(tussock.trait.log, w.type = "optimized", opti.maxiter = 200)#there are NAs so the iteration approach is the only possible
 cors.gaw<-attr(gaw.nogroups,"correls")
 cors.gaw[12]<-mantel(gaw.nogroups, gowdis(as.data.frame(tussock.trait.log[, 2:6])), na.rm=T)$statistic
 names(cors.gaw)[12]<-"leaves"
@@ -204,7 +204,7 @@ A better solution can be obtained by saying that all leaf traits belong to a giv
 
 ```{r}
 colnames(tussock.trait.log)
-gaw.groups<-gawdis(tussock.trait.log, w.type = "optimized", opti.maxiter = 300, groups.weight=T, groups = c(1,2, 2, 2, 2, 2, 3, 4, 5, 6, 7))#there are NAs so the iteration approach is the only possible
+gaw.groups<-gawdis(tussock.trait.log, w.type = "optimized", opti.maxiter = 200, groups.weight=T, groups = c(1,2, 2, 2, 2, 2, 3, 4, 5, 6, 7))#there are NAs so the iteration approach is the only possible
 cors.gaw.gr<-attr(gaw.groups,"correls")
 cors.gaw.gr[12]<-attr(gaw.groups,"group.correls")[2]
 names(cors.gaw.gr)[12]<-"leaves"
