@@ -4,7 +4,7 @@ author: "Francesco de Bello (fradebello@ext.uv.es)"
 date: "9.10.2020"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{my-vignette}
+  %\VignetteIndexEntry{gawdis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
