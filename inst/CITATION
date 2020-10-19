@@ -1,0 +1,9 @@
+bibentry(bibtype = "Manual",
+         title = "Towards a more balanced combination of multiple traits when computing functional differences between species",
+         author = c(person("Francesco", "de Bello"),
+                    person("Zoltan", "Bott-Dukat"),
+                    person("Jan", "Leps"),
+                    person("Pavel", "Fibich")),
+         year = 2021,
+         note = "Methods in Ecology and Evolution (under review)",
+         url = "https://github.com/pavel-fibich/gawdis")
