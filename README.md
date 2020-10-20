@@ -17,11 +17,10 @@ and then run it similarly as gowdis from FD package (https://cran.r-project.org/
 Examples
 ======
 For nice examples see vignettes on CRAN https://cran.r-project.org/web/packages/gawdis or directly in R :
-
 ```
-vignette("gawdis")
+  vignette("gawdis")
 ```
-
+To check the package follow examples
 ```
   library(gawdis)
   bodysize<-c(10, 20, 30, 40, 50, NA, 70)
