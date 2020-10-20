@@ -47,6 +47,8 @@ vignette("gawdis")
   mean.dissim.all### this is the correct one
   
   x=tall; w.type="equal"; groups =c(1, 2, 3, 3, 3); fuzzy=TRUE
-  gawdis(tall, w.type="equal", groups =c(1, 2, 3, 3, 3), fuzzy=TRUE)
+  (gaw.tallo<-gawdis(tall, w.type="optimized", groups =c(1, 2, 3,3,3), fuzzy=TRUE))
+  (gaw.talle<-gawdis(tall, w.type="equal", groups =c(1, 2, 3, 3, 3), fuzzy=TRUE))
+  attr(gaw.talle,"weights")
 ```  
 
