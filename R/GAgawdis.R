@@ -25,8 +25,11 @@
 #' @keywords gawdis gowdis
 #' @return  Returns 'diss' as dissimilarity, weights as solution of GA, ga as GA, spedis as species distance.
 #' @examples
-#' library(FD)
-#' GAgawdis(dummy$trait,maxiter=20)
+#' #GAgawdis() is not exptected to be run directly, but you can try it by
+#' \donttest{
+#'  library(FD)
+#'  GAgawdis(dummy$trait,maxiter=100)
+#'  }
 #'
 
 GAgawdis <- function(tr=NULL, asym.bin = NULL, ord = "podani",

@@ -43,8 +43,11 @@ Returns 'diss' as dissimilarity, weights as solution of GA, ga as GA, spedis as 
 Internal part of \code{gawdis()} function for running genetic algorithm
 }
 \examples{
-library(FD)
-GAgawdis(dummy$trait,maxiter=20)
+#GAgawdis() is not exptected to be run directly, but you can try it by
+\donttest{
+ library(FD)
+ GAgawdis(dummy$trait,maxiter=100)
+ }
 
 }
 \keyword{gawdis}

@@ -1,6 +1,6 @@
 #' @title gawdis function
 #'
-#' @description \code{gawdis()}, is an extension of the function \code{gowdis}, in the package FD, for Gower distance (Gower 1971) as fully described in de Bello et al. (2021). It provides a solution to the problem of unequal traits contribution when combining different traits in a multi-trait dissimilarity (without care the contribution of some traits can much stronger than others, i.e. the correlation of the dissimilarity of individual trait, with the multi-trait dissimilarity, will be much stronger for some traits, particularly categorical ones). The solution to this problem is based on minimizing the differences in the correlation between the dissimilarity of each individual trait (or type of traits) and the multi-trait one. Such a task can be resolved analytically or using iterative explorations, depending on the type of data (basically is NA is available only the iterative approach is possible). Both approaches assess ways to provide an equal contribution of traits to the combined trait dissimilarity. Iterative exploration borrows an algorithm from genetic analyses (GA), with the package for genetic algorithms GA, Morrall (2003). This approach is used to minimize standard deviation (SD) of Pearson correlations between the Gower dissimilarity based on single traits and Gower distances combining all traits together, with a proper weight on each variable. GA iteratively explores the space of trait weights by trying several sets of weights (population of candidate solutions), and combines them by processes inspired from the biology (e.g. selection, mutation and crossover) to get new sets of weights (new generation) with better fitness than previous one (Morrall 2003). The best fitness in our case are weights with the minimal SD of correlations. GA is thus doing an optimization, meaning that the more interactions is used the better solution should be found (although still there is a random effect applied), but also greater computing time is necessary. When the \code{groups} are given, first a combined traits distance between species is computed for each group separately as a distance for all traits inside the group together. The computation of the distance depends also on if the traits should be weighted inside the groups. If so, the weights are at the first found by gawdis() applied on the matrix with just traits inside the group (gawdis() founds the best weights for the group). If traits should not be weighted inside the groups, directly just a standard Gower distances is applied for all traits inside the group.
+#' @description \code{gawdis()}, is an extension of the function \link[FD]{gowdis}, in the package FD, for Gower distance (Gower 1971) as fully described in de Bello et al. (2021). It provides a solution to the problem of unequal traits contribution when combining different traits in a multi-trait dissimilarity (without care the contribution of some traits can much stronger than others, i.e. the correlation of the dissimilarity of individual trait, with the multi-trait dissimilarity, will be much stronger for some traits, particularly categorical ones). The solution to this problem is based on minimizing the differences in the correlation between the dissimilarity of each individual trait (or type of traits) and the multi-trait one. Such a task can be resolved analytically or using iterative explorations, depending on the type of data (basically is NA is available only the iterative approach is possible). Both approaches assess ways to provide an equal contribution of traits to the combined trait dissimilarity. Iterative exploration borrows an algorithm from genetic analyses (GA), with the package for genetic algorithms GA, Morrall (2003). This approach is used to minimize standard deviation (SD) of Pearson correlations between the Gower dissimilarity based on single traits and Gower distances combining all traits together, with a proper weight on each variable. GA iteratively explores the space of trait weights by trying several sets of weights (population of candidate solutions), and combines them by processes inspired from the biology (e.g. selection, mutation and crossover) to get new sets of weights (new generation) with better fitness than previous one (Morrall 2003). The best fitness in our case are weights with the minimal SD of correlations. GA is thus doing an optimization, meaning that the more interactions is used the better solution should be found (although still there is a random effect applied), but also greater computing time is necessary. When the \code{groups} are given, first a combined traits distance between species is computed for each group separately as a distance for all traits inside the group together. The computation of the distance depends also on if the traits should be weighted inside the groups. If so, the weights are at the first found by \code{gawdis()} applied on the matrix with just traits inside the group (gawdis() founds the best weights for the group). If traits should not be weighted inside the groups, directly just a standard Gower distances is applied for all traits inside the group.
 #'
 #' @param x Matrix or data frame containing the variables. Variables can be numeric, ordered, or factor. Symmetric or asymmetric binary variables should be numeric and only contain 0 and 1. Character variables will be converted to factor. NAs are tolerated.
 #' @param W Vector listing the weights for the variables in x. W is considered only if \code{w.type} is \code{user}, for \code{w.type="equal"} all weights having the same value and for other w.type’s the weights are computed (see \code{w.type}).
@@ -9,7 +9,7 @@
 #' @param w.type Rype of used method. \code{w.type = "analytic"} (default option) – weights optimized by a mathematical algorithm (no NAs are allowed in this option); \code{w.type = "optimized"} – weights optimized by genetic/optimization algorithm based on iteractions; \code{w.type = "equal"} – equal weights, \code{w.type = "user"} – user defined weights are used. Note that is \code{w.type = "analytic"} in case of NAs, the function will apply \code{w.type = "equal"}.
 #' @param groups Cector for traits grouping, i.e. defining group of traits that are considered to be reflecting similar biological information (e.g. many leaf traits in plants covering similar information). By default each trait is treated separately (\code{groups = NULL}). In order to define groups use the same values, e.g. \code{groups = c(1,2,2,2,3,3)} in case of 6 variables attributed to 3 groups, with the length of vector that should be the same as \code{ncol(x)}.
 #' @param groups.weight Option to weight traits inside the groups. By default it is set to FALSE, all traits inside the groups have the same weights, meaning that some traits will have a greater contribution within the group; TRUE means that gawdis will determine different weights of traits inside the groups, before combining this group with other traits outside the group.
-#' @param fuzzy Aet to TRUE in case there is a group of columns, in x, which is defining a single variable, like in the case of fuzzy coding and dummy variables. In this case, use the argument ‘groups’ to define which columns belong to this group. If set to TRUE the function will make sure distances between species within groups to have maximum value set to 1. Default is FALSE, not to transform between species distances. Having groups.weight and fuzzy set both to TRUE is not possible, therefore fuzzy=TRUE leads to overwriting groups.weight to FALSE.
+#' @param fuzzy Aet to TRUE in case there is a group of columns, in x, which is defining a single variable, like in the case of fuzzy coding and dummy variables. In this case, use the argument \code{groups} to define which columns belong to this group. If set to TRUE the function will make sure distances between species within groups to have maximum value set to 1. Default is FALSE, not to transform between species distances. Having groups.weight and fuzzy set both to TRUE is not possible, therefore fuzzy=TRUE leads to overwriting groups.weight to FALSE.
 #' @param silent If to print warnings and detailed information during the computation.
 #' @param opti.getSpecDists Allows to use own code that defines the function \code{getSpecDists(tr,gr,gr.weight)} for computing distances between species for each trait (traits are passed as tr argument). It can be given, or pre-defined function doing the same things as gowdis is used (it is not necessary to specify it). If groups and groups.weight arguments are given in gawdis, then they are passed to \code{getSpecDists()} as gr and gr.weight arguments.
 #' @param opti.f This is the criteria used to equalize the contribution of traits to the multi-trait dissimilarity. It can be specified. Alternative, by default, the approach is minimizing the differences in the correlations between the dissimilarity on individual trait and the multi-trait approach. Specifically the  1/SD of correlations (SD=standard deviation) is used, i.e. all traits will tend to have a similar correlation with the multi-trait dissimilarity. opti.f is fitness function that is maximalized by genetic algorithm.
@@ -38,14 +38,14 @@
 #'
 #' Laliberté, E., Legendre, P., and Shipley, B. (2014). FD: measuring functional diversity from multiple traits, and other tools for functional ecology. R package version 1.0-12. https://cran.r-project.org/package=FD.
 #'
-#' @seealso gowdis() from FD package.
+#' @seealso \link[FD]{gowdis} from FD package.
 #' @examples
 #' library(FD) # input data
 #' #the gowdis and gawdis functions provide the same results#
 #' ex1 <- gowdis(dummy$trait)
 #' #using gawdis in the same way as gowdis
 #' ex1.gaw1 <- gawdis(dummy$trait, w.type ="equal")
-#' plot(ex1, ex1.gaw1); abline(0, 1)
+#' \donttest{plot(ex1, ex1.gaw1); abline(0, 1)}
 #' #but when doing so, some traits have stronger contribution on the
 #' #multi-trait dissimilarity particularly factorial and binary traits#
 #' attr(ex1.gaw1, "correls")
@@ -61,42 +61,13 @@
 #' #used by default if not defined#
 #' attr(analytical, "correls")
 #' attr(analytical, "weights") #weights finally given to traits
-#' iters<-gawdis(dummy$trait[,c(2,4,6,8)], w.type ="optimized", opti.maxiter=20)
-#' #here we used 'only' 20 iterations, to speed up the process and
-#' #because with such few species this is likely to be enough#
+#' iters<-gawdis(dummy$trait[,c(2,4,6,8)], w.type ="optimized", opti.maxiter=2)
+#' #here we used 'only' 2 iterations, to speed up the process of tests and
+#' #because it better to use at least opti.maxiter=100#
 #' attr(iters, "correls")
 #' #correlations are not equal, but enough close to each other
 #' attr(iters, "weights")
-#' plot(analytical, iters); abline(0, 1)
-#'
-#' #make groups, when there are traits that are either very much correlated
-#' # or from the same organs#
-#' #example from the tussock dataset, with many leaf traits#
-#' head(tussock$trait)
-#' head(tussock$trait[, 3:7])
-#' cor(tussock$trait[, 3:7], use = "complete")
-#' #select fewer traits and log-transform when needed#
-#' tussock.trait<-tussock$trait[, c("height", "LDMC", "leafN","leafS",
-#'  "leafP", "SLA", "seedmass", "raunkiaer", "pollination", "clonality",
-#'  "growthform")]
-#' tussock.trait.log<-tussock.trait
-#' #some traits needed log-tranformation, just creating a matrix to
-#' #store the new data
-#' tussock.trait.log$height<-log(tussock.trait$height)
-#' tussock.trait.log$seedmass<-log(tussock.trait$seedmass)
-#' tussock.trait.log$leafS<-log(tussock.trait$leafS)
-#' colnames(tussock.trait.log)
-#' #run the function and test trait contributions#
-#' #there are NAs so the iteration approach is the only possible
-#' gaw.groups<-gawdis(tussock.trait.log, w.type = "optimized",
-#'  opti.maxiter=50,groups.weight=TRUE,groups = c(1,2,2,2,2,2,3,4,5,6,7))
-#' cors.gaw.gr<-attr(gaw.groups,"correls")
-#' cors.gaw.gr[12]<-attr(gaw.groups,"group.correls")[2]
-#' names(cors.gaw.gr)[12]<-"leaves"
-#' cors.gaw.gr
-#' #correlation of single traits dissimilarity,
-#' #including all leaf traits together ("leaves") with
-#' #multi-trait dissimilarity
+#' \donttest{plot(analytical, iters); abline(0, 1)}
 #'
 #' #the function can be used also for fuzzy coded/dummy variables traits#
 #' #let's create some data#
@@ -113,9 +84,9 @@
 #' tall
 #' #use groups and fuzzy=T to treat the 3 columns related to traits
 #' #as one traits#
-#' gawdis(tall, w.type="optimized", groups =c(1, 2, 3,3,3), fuzzy=TRUE)
 #' gaw.tall<-gawdis(tall, w.type="equal", groups =c(1, 2, 3,3,3), fuzzy=TRUE)
 #' attr(gaw.tall,"weights")
+#' #to get optimized results just change w.type="optimized"
 #'
 gawdis <- function (x, W=NULL, asym.bin = NULL, ord = c("podani", "metric","classic"),
                      w.type = c("analytic","optimized","equal","user"),

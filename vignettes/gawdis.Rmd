@@ -1,6 +1,6 @@
 ---
 title: "Guidelines for the function *gawdis*"
-author: "Francesco de Bello (fradebello@ext.uv.es)"
+author: "Francesco de Bello (fradebello@ext.uv.es), Zoltan Botta-Dukat, Pavel Fibich"
 date: "9.10.2020"
 output: rmarkdown::html_vignette
 vignette: >

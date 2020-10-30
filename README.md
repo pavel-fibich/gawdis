@@ -49,5 +49,39 @@ To check the package follow examples
   (gaw.tallo<-gawdis(tall, w.type="optimized", groups =c(1, 2, 3,3,3), fuzzy=TRUE))
   (gaw.talle<-gawdis(tall, w.type="equal", groups =c(1, 2, 3, 3, 3), fuzzy=TRUE))
   attr(gaw.talle,"weights")
+  
+  #make groups, when there are traits that are either very much correlated
+  #or from the same organs#
+  #example from the tussock dataset, with many leaf traits#
+  library("FD")
+  head(tussock$trait)
+  head(tussock$trait[, 3:7])
+  cor(tussock$trait[, 3:7], use = "complete")
+  #select fewer traits and log-transform when needed#
+  tussock.trait<-tussock$trait[, c("height", "LDMC", "leafN","leafS",
+  "leafP", "SLA", "seedmass", "raunkiaer", "pollination", "clonality",
+  "growthform")]
+  tussock.trait.log<-tussock.trait
+  #some traits needed log-tranformation, just creating a matrix to
+  #store the new data
+  tussock.trait.log$height<-log(tussock.trait$height)
+  tussock.trait.log$seedmass<-log(tussock.trait$seedmass)
+  tussock.trait.log$leafS<-log(tussock.trait$leafS)
+  colnames(tussock.trait.log)
+  #run the function and test trait contributions#
+  #there are NAs so the iteration approach is the only possible#
+  #only 20 iterations are used, because of tests#
+  #use definitely at least opti.maxiter=100
+  gaw.groups<-gawdis(tussock.trait.log, w.type = "optimized",
+  opti.maxiter=20,groups.weight=TRUE,groups = c(1,2,2,2,2,2,3,4,5,6,7))
+  cors.gaw.gr<-attr(gaw.groups,"correls")
+  cors.gaw.gr[12]<-attr(gaw.groups,"group.correls")[2]
+  names(cors.gaw.gr)[12]<-"leaves"
+  cors.gaw.gr
+  #correlation of single traits dissimilarity,
+  #including all leaf traits together ("leaves") with
+  #multi-trait dissimilarity
+
+  
 ```  
 
