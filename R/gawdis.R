@@ -5,11 +5,11 @@
 #' @param x Matrix or data frame containing the variables. Variables can be numeric, ordered, or factor. Symmetric or asymmetric binary variables should be numeric and only contain 0 and 1. Character variables will be converted to factor. NAs are tolerated.
 #' @param W Vector listing the weights for the variables in x. W is considered only if \code{w.type} is \code{user}, for \code{w.type="equal"} all weights having the same value and for other w.type’s the weights are computed (see \code{w.type}).
 #' @param asym.bin Vector listing the asymmetric binary variables in x.
-#' @param ord	Xharacter string specifying the method to be used for ordinal variables (i.e. ordered). "podani" refers to Eqs. 2a-b of Podani (1999), while "metric" refers to his Eq. 3 (see ‘Details’); both options convert ordinal variables to ranks. "classic" simply treats ordinal variables as continuous variables.
-#' @param w.type Rype of used method. \code{w.type = "analytic"} (default option) – weights optimized by a mathematical algorithm (no NAs are allowed in this option); \code{w.type = "optimized"} – weights optimized by genetic/optimization algorithm based on iteractions; \code{w.type = "equal"} – equal weights, \code{w.type = "user"} – user defined weights are used. Note that is \code{w.type = "analytic"} in case of NAs, the function will apply \code{w.type = "equal"}.
-#' @param groups Cector for traits grouping, i.e. defining group of traits that are considered to be reflecting similar biological information (e.g. many leaf traits in plants covering similar information). By default each trait is treated separately (\code{groups = NULL}). In order to define groups use the same values, e.g. \code{groups = c(1,2,2,2,3,3)} in case of 6 variables attributed to 3 groups, with the length of vector that should be the same as \code{ncol(x)}.
+#' @param ord	Character string specifying the method to be used for ordinal variables (i.e. ordered). "podani" refers to Eqs. 2a-b of Podani (1999), while "metric" refers to his Eq. 3 (see ‘Details’); both options convert ordinal variables to ranks. "classic" simply treats ordinal variables as continuous variables.
+#' @param w.type Type of used method. \code{w.type = "analytic"} (default option) – weights optimized by a mathematical algorithm (no NAs are allowed in this option); \code{w.type = "optimized"} – weights optimized by genetic/optimization algorithm based on iteractions; \code{w.type = "equal"} – equal weights, \code{w.type = "user"} – user defined weights are used. Note that is \code{w.type = "analytic"} in case of NAs, the function will apply \code{w.type = "equal"}.
+#' @param groups Vector for traits grouping, i.e. defining group of traits that are considered to be reflecting similar biological information (e.g. many leaf traits in plants covering similar information). By default each trait is treated separately (\code{groups = NULL}). In order to define groups use the same values, e.g. \code{groups = c(1,2,2,2,3,3)} in case of 6 variables attributed to 3 groups, with the length of vector that should be the same as \code{ncol(x)}.
 #' @param groups.weight Option to weight traits inside the groups. By default it is set to FALSE, all traits inside the groups have the same weights, meaning that some traits will have a greater contribution within the group; TRUE means that gawdis will determine different weights of traits inside the groups, before combining this group with other traits outside the group.
-#' @param fuzzy Aet to TRUE in case there is a group of columns, in x, which is defining a single variable, like in the case of fuzzy coding and dummy variables. In this case, use the argument \code{groups} to define which columns belong to this group. If set to TRUE the function will make sure distances between species within groups to have maximum value set to 1. Default is FALSE, not to transform between species distances. Having groups.weight and fuzzy set both to TRUE is not possible, therefore fuzzy=TRUE leads to overwriting groups.weight to FALSE.
+#' @param fuzzy Vector including groups which are defining a single variable, like in the case of fuzzy coding and dummy variables. In this case, use the argument \code{groups} to define which columns belong to the groups. If \code{fuzzy} includes group name (from \code{groups} argument), then the function will transform distances between species within specified group to have maximum value set to 1 (e.g. for \code{groups=c(1,1,2,2,2),fuzzy=c(2)} only distances of group 2 will be transformed). Default is NULL, not to transform distances of any group. Having both \code{groups.weight=TRUE, fuzzy=TRUE} is not possible, therefore \code{!is.null(fuzzy)} leads to overwriting \code{groups.weight} to FALSE.
 #' @param silent If to print warnings and detailed information during the computation.
 #' @param opti.getSpecDists Allows to use own code that defines the function \code{getSpecDists(tr,gr,gr.weight)} for computing distances between species for each trait (traits are passed as tr argument). It can be given, or pre-defined function doing the same things as gowdis is used (it is not necessary to specify it). If groups and groups.weight arguments are given in gawdis, then they are passed to \code{getSpecDists()} as gr and gr.weight arguments.
 #' @param opti.f This is the criteria used to equalize the contribution of traits to the multi-trait dissimilarity. It can be specified. Alternative, by default, the approach is minimizing the differences in the correlations between the dissimilarity on individual trait and the multi-trait approach. Specifically the  1/SD of correlations (SD=standard deviation) is used, i.e. all traits will tend to have a similar correlation with the multi-trait dissimilarity. opti.f is fitness function that is maximalized by genetic algorithm.
@@ -20,7 +20,7 @@
 #' @usage
 #' gawdis(x,W = NULL, asym.bin = NULL, ord = c("podani", "metric", "classic"),
 #' w.type = c("analytic", "optimized", "equal", "user"), groups = NULL,
-#' groups.weight = FALSE, fuzzy = FALSE, opti.getSpecDists = NULL,
+#' groups.weight = FALSE, fuzzy = NULL, opti.getSpecDists = NULL,
 #' opti.f = NULL,opti.min.weight = 0.01, opti.max.weight = 1,
 #' opti.maxiter = 300, silent = FALSE)
 #'
@@ -82,27 +82,27 @@
 #' rownames(colors.fuzzy)<-paste("sp", 1:7, sep="")
 #' tall<-as.data.frame(cbind(bodysize, carnivory, colors.fuzzy))
 #' tall
-#' #use groups and fuzzy=T to treat the 3 columns related to traits
+#' #use groups and fuzzy to treat the 3 columns related to traits
 #' #as one traits#
-#' gaw.tall<-gawdis(tall, w.type="equal", groups =c(1, 2, 3,3,3), fuzzy=TRUE)
+#' gaw.tall<-gawdis(tall, w.type="equal", groups =c(1, 2, 3,3,3),fuzzy=c(3))
 #' attr(gaw.tall,"weights")
 #' #to get optimized results just change w.type="optimized"
 #'
 gawdis <- function (x, W=NULL, asym.bin = NULL, ord = c("podani", "metric","classic"),
                      w.type = c("analytic","optimized","equal","user"),
-                     groups=NULL, groups.weight=FALSE, fuzzy=FALSE,
+                     groups=NULL, groups.weight=FALSE, fuzzy=NULL,
                      opti.getSpecDists=NULL, opti.f=NULL, opti.min.weight=0.01,
                      opti.max.weight=1, opti.maxiter=300, silent=FALSE)
 
   {
     if (length(dx <- dim(x)) != 2 || !(is.data.frame(x) || is.numeric(x)))
         stop("x is not a dataframe or a numeric matrix\n")
-    if( (fuzzy) & (groups.weight) ){
-      warning("fuzzy=TRUE and groups.weight=TRUE is not possible, groups.weight is set to FALSE")
+    if( (!is.null(fuzzy)) & (groups.weight) ){
+      warning("(fuzzy!=NULL) and groups.weight=TRUE is not possible, groups.weight is set to FALSE")
       groups.weight <- FALSE
     }
-    if( (fuzzy) & ( length(groups)<1 ) ){
-      warning("fuzzy=TRUE requires having groups argument set, distances are just divided by max distance")
+    if( ( !is.null(fuzzy)) & ( length(groups)<1 ) ){
+      warning("fuzzy!=NULL requires having groups argument set, distances will not be transformed")
     }
 
     w.type <- match.arg(w.type)
@@ -328,14 +328,14 @@ gawdis <- function (x, W=NULL, asym.bin = NULL, ord = c("podani", "metric","clas
     }
 ##### end of w.type specialization
     #####
-    if ( ( length(groups)<1 ) | (length(unique(groups))==1) | (w.type %in% c("analitic","optimized") ) ) {
+    if ( ( length(groups)<1 ) | (length(unique(groups))==1) | (w.type %in% c("analytic","optimized") ) ) {
       # groups are solved inside the methods
       #warning("not separating groups")
       w.mat<-t(matrix(rep(w,nrow(d.raw)),nrow=p,ncol=nrow(d.raw)))
       d.rawna<-p-rowSums(is.na(d.raw))
       for (dn in which(d.rawna!=p)) w.mat[dn, !is.na(d.raw[dn,]) ] <- w[!is.na(d.raw[dn,])] / sum(w[!is.na(d.raw[dn,])])
       res<-rowSums(d.raw*w.mat,na.rm=T)
-      if ( fuzzy ) res <- res/max(res,na.rm=T)
+      if ( (!is.null(fuzzy)) && (length(unique(groups))==1) && (unique(groups) %in% fuzzy) ) res <- res/max(res,na.rm=T)
     } else {
       # groups for equal and user must be solved separately
       #warning("separating groups")
@@ -347,12 +347,12 @@ gawdis <- function (x, W=NULL, asym.bin = NULL, ord = c("podani", "metric","clas
         if (is.null(pgaw)){
           pgaw <- gawdis(as.data.frame(x[,ii]),W=w[ii],w.type=w.type,groups=rep(i,length(ii)), fuzzy=fuzzy)
           pgaw.na <- !is.na(gowdis(as.data.frame(x[,ii])))
-          if (fuzzy) pgaw <- pgaw / max(pgaw,na.rm=T)
+          if ( (!is.null(fuzzy)) && ( i %in% fuzzy ) ) pgaw <- pgaw / max(pgaw,na.rm=T)
         } else {
           onegaw <- gawdis(as.data.frame(x[,ii]),W=w[ii],w.type=w.type,groups=rep(i,length(ii)), fuzzy=fuzzy)
           pgaw.na1 <- !is.na(gowdis(as.data.frame(x[,ii])))
           pgaw.na <- pgaw.na + pgaw.na1
-          if  (fuzzy){
+          if ( (!is.null(fuzzy)) && ( i %in% fuzzy ) ) {
             pgaw <- pgaw + (onegaw/ max(onegaw,na.rm=T))
           } else {
             pgaw <- pgaw + onegaw

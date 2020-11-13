@@ -7,7 +7,7 @@
 #' @param asym.bin Vector listing the asymmetric binary variables in x.
 #' @param ord	Character string specifying the method to be used for ordinal variables (i.e. ordered). \code{podani} refers to Eqs. 2a-b of Podani (1999), while "metric" refers to his Eq. 3 (see ‘Details’); both options convert ordinal variables to ranks. "classic" simply treats ordinal variables as continuous variables.
 #' @param gr.weight Option to weight traits inside the groups. By default it is set to FALSE, all traits inside the groups have the same weights, meaning that some traits will have a greater contribution within the group; TRUE means that \code{gawdis()} will determine different weights of traits inside the groups, before combining this group with other traits outside the group.
-#' @param fuzzy Set to TRUE in case there is a group of columns, in x, which is defining a single variable, like in the case of fuzzy coding and dummy variables. In this case, use the argument \code{groups} to define which columns belong to this group. If set to TRUE the function will make sure distances between species within groups to have maximum value set to 1. Default is FALSE, not to transform between species distances. Having groups.weight and fuzzy set both to TRUE is not possible, therefore fuzzy=TRUE leads to overwriting groups.weight to FALSE.
+#' @param fuzzy Vector including groups which are defining a single variable, like in the case of fuzzy coding and dummy variables. In this case, use the argument \code{groups} to define which columns belong to the groups. If \code{fuzzy} includes group name (from \code{groups} argument), then the function will transform distances between species within specified group to have maximum value set to 1 (e.g. for \code{groups=c(1,1,2,2,2),fuzzy=c(2)} only distances of group 2 will be transformed). Default is NULL, not to transform distances of any group. Having both \code{groups.weight=TRUE, fuzzy=TRUE} is not possible, therefore \code{!is.null(fuzzy)} leads to overwriting \code{groups.weight} to FALSE.
 #' @param getSpecDists Allows to use own code that defines the function \code{getSpecDists(tr,gr,gr.weight)} for computing distances between species for each trait (traits are passed as tr argument). It can be given, or pre-defined function doing the same things as \code{gowdis()} is used (it is not necessary to specify it). If groups and groups.weight arguments are given in gawdis, then they are passed to \code{getSpecDists()} as gr and gr.weight arguments.
 #' @param f This is the criteria used to equalize the contribution of traits to the multi-trait dissimilarity. It can be specified. Alternative, by default, the approach is minimizing the differences in the correlations between the dissimilarity on individual trait and the multi-trait approach. Specifically the  1/SD of correlations (SD=standard deviation) is used, i.e. all traits will tend to have a similar correlation with the multi-trait dissimilarity. opti.f is fitness function that is maximalized by genetic algorithm.
 #' @param min.weight Set minimum value for weights of traits.
@@ -18,7 +18,7 @@
 #'
 #' @usage
 #' GAgawdis( tr = NULL, asym.bin = NULL, ord = "podani",gr = NULL,
-#' gr.weight = FALSE, fuzzy = FALSE, getSpecDists = NULL,
+#' gr.weight = FALSE, fuzzy = NULL, getSpecDists = NULL,
 #' f = NULL, min.weight = 0.001, max.weight = 1, maxiter = 300,
 #' monitor = FALSE, ... )
 #'
@@ -33,7 +33,7 @@
 #'
 
 GAgawdis <- function(tr=NULL, asym.bin = NULL, ord = "podani",
-                  gr=NULL, gr.weight=FALSE, fuzzy=FALSE, getSpecDists=NULL, f=NULL, min.weight=0.001,max.weight=1,
+                  gr=NULL, gr.weight=FALSE, fuzzy=NULL, getSpecDists=NULL, f=NULL, min.weight=0.001,max.weight=1,
                   maxiter=300, monitor=FALSE, ...) {
 
 
@@ -93,7 +93,7 @@ GAgawdis <- function(tr=NULL, asym.bin = NULL, ord = "podani",
               } else { # no weighting inside the groups
                 print ("Traits inside the group were not weighted - optimized.")
                 ggow = gowdis( as.data.frame(tr[, ii]) , asym.bin = asym.bin, ord=ord)
-                if (fuzzy) ggow <- ggow/max(ggow,na.rm=T)
+                if ( (!is.null(fuzzy)) && ( i %in% fuzzy ) ) ggow <- ggow/max(ggow,na.rm=T)
                 speciesdists[[ paste(names(tr)[ii], collapse = ".gr.") ]] = ggow
               }
             } else { # individual trait

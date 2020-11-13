@@ -5,7 +5,7 @@
 \title{Internal Genetic Algorithm gawdis function}
 \usage{
 GAgawdis( tr = NULL, asym.bin = NULL, ord = "podani",gr = NULL,
-gr.weight = FALSE, fuzzy = FALSE, getSpecDists = NULL,
+gr.weight = FALSE, fuzzy = NULL, getSpecDists = NULL,
 f = NULL, min.weight = 0.001, max.weight = 1, maxiter = 300,
 monitor = FALSE, ... )
 }
@@ -20,7 +20,7 @@ monitor = FALSE, ... )
 
 \item{gr.weight}{Option to weight traits inside the groups. By default it is set to FALSE, all traits inside the groups have the same weights, meaning that some traits will have a greater contribution within the group; TRUE means that \code{gawdis()} will determine different weights of traits inside the groups, before combining this group with other traits outside the group.}
 
-\item{fuzzy}{Set to TRUE in case there is a group of columns, in x, which is defining a single variable, like in the case of fuzzy coding and dummy variables. In this case, use the argument \code{groups} to define which columns belong to this group. If set to TRUE the function will make sure distances between species within groups to have maximum value set to 1. Default is FALSE, not to transform between species distances. Having groups.weight and fuzzy set both to TRUE is not possible, therefore fuzzy=TRUE leads to overwriting groups.weight to FALSE.}
+\item{fuzzy}{Vector including groups which are defining a single variable, like in the case of fuzzy coding and dummy variables. In this case, use the argument \code{groups} to define which columns belong to the groups. If \code{fuzzy} includes group name (from \code{groups} argument), then the function will transform distances between species within specified group to have maximum value set to 1 (e.g. for \code{groups=c(1,1,2,2,2),fuzzy=c(2)} only distances of group 2 will be transformed). Default is NULL, not to transform distances of any group. Having both \code{groups.weight=TRUE, fuzzy=TRUE} is not possible, therefore \code{!is.null(fuzzy)} leads to overwriting \code{groups.weight} to FALSE.}
 
 \item{getSpecDists}{Allows to use own code that defines the function \code{getSpecDists(tr,gr,gr.weight)} for computing distances between species for each trait (traits are passed as tr argument). It can be given, or pre-defined function doing the same things as \code{gowdis()} is used (it is not necessary to specify it). If groups and groups.weight arguments are given in gawdis, then they are passed to \code{getSpecDists()} as gr and gr.weight arguments.}
 

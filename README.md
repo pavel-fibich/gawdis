@@ -3,16 +3,16 @@ gawdis
 
 **gawdis** is was designed in the manuscript *Towards a more balanced combination of multiple traits when computing functional differences between species* by Francesco de Bello, Zoltan Botta-Dukat, Jan Leps & Pavel Fibich (under review in MEE).
 
-**gawdis** R package provides 'gawdis' function to produce multi-trait dissimilarity with more uniform contributions of different traits. The approach is based on minimizing the differences in the correlation between the dissimilarity of each trait, or groups of traits, and the multi-trait dissimilarity. This is done using either an analytic or a numerical solution, both available in the function.
+**gawdis** R package provides 'gawdis()' function to produce multi-trait dissimilarity with more uniform contributions of different traits. The approach is based on minimizing the differences in the correlation between the dissimilarity of each trait, or groups of traits, and the multi-trait dissimilarity. This is done using either an analytic or a numerical solution, both available in the function.
 
-**gawdis** will be available on CRAN https://cran.r-project.org/web/packages/gawdis you just need
+**gawdis** is available on CRAN https://cran.r-project.org/web/packages/gawdis you just need to
 
 ```
 install.packages("gawdis")
 library("gawdis")
 ```
 
-and then run it similarly as gowdis from FD package (https://cran.r-project.org/web/packages/FD).
+and then run it similarly as 'gowdis()' from FD package (https://cran.r-project.org/web/packages/FD).
 
 Examples
 ======
@@ -20,7 +20,7 @@ For nice examples see vignettes on CRAN https://cran.r-project.org/web/packages/
 ```
   vignette("gawdis")
 ```
-To check the package follow examples
+To check the package, you can also follow additional examples:
 ```
   library(gawdis)
   bodysize<-c(10, 20, 30, 40, 50, NA, 70)
@@ -45,9 +45,9 @@ To check the package follow examples
   mean.dissim.all<-as.dist(apply(simplify2array(dall), c(1, 2), mean, na.rm=T), 2)
   mean.dissim.all### this is the correct one
   
-  x=tall; w.type="equal"; groups =c(1, 2, 3, 3, 3); fuzzy=TRUE
-  (gaw.tallo<-gawdis(tall, w.type="optimized", groups =c(1, 2, 3,3,3), fuzzy=TRUE))
-  (gaw.talle<-gawdis(tall, w.type="equal", groups =c(1, 2, 3, 3, 3), fuzzy=TRUE))
+  
+  (gaw.tallo<-gawdis(tall, w.type="optimized", groups =c(1, 2, 3,3,3), fuzzy=c(3) ) )
+  (gaw.talle<-gawdis(tall, w.type="equal", groups =c(1, 2, 3, 3, 3), fuzzy=c(3) ) )
   attr(gaw.talle,"weights")
   
   #make groups, when there are traits that are either very much correlated

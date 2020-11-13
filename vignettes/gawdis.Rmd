@@ -1,7 +1,7 @@
 ---
 title: "Guidelines for the function *gawdis*"
 author: "Francesco de Bello (fradebello@ext.uv.es), Zoltan Botta-Dukat, Pavel Fibich"
-date: "9.10.2020"
+date: "13.11.2020"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{gawdis}
@@ -14,19 +14,19 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ### Introduction
-In this step-by-step guide we will look how the function `gawdis` works and to apply it using simple data (either available in the FD package or made up below). The function `gawdis`, designed by Pavel Fibich, is an extension of the classic function `gowdis` in the package FD (Laliberté, Legendre and Shipley 2014). The function computes dissimilarity between units, usually species, based on multiple types of variables (e.g. quantitative, categorical etc.), usually species' traits. Hence it can normally be applied to compute multi-trait dissimilarity between species in functional trait ecology studies, but it can be used in other applications as well. The dissimilarity obtained can be computed in order to attain a quasi-identical contribution of individual variables (e.g. traits) or group of associated variables (on variables reflecting similar information, e.g. multiple leaf traits). The dissimilarity is computed by either an analytical approach or through iterations. The function borrows several arguments from `gowdis`, with additional ones described below. This includes the option to consider fuzzy and dummy variables (e.g. multiple columns defining a single trait). 
+In this step-by-step guide we will look how the function `gawdis()` works and to apply it using simple data (either available in the FD package or made up below). The function `gawdis()`, designed by Pavel Fibich, is an extension of the classic function `gowdis()` in the package FD (Laliberté, Legendre and Shipley 2014). The function computes dissimilarity between units, usually species, based on multiple types of variables (e.g. quantitative, categorical etc.), usually species' traits. Hence it can normally be applied to compute multi-trait dissimilarity between species in functional trait ecology studies, but it can be used in other applications as well. The dissimilarity obtained can be computed in order to attain a quasi-identical contribution of individual variables (e.g. traits) or group of associated variables (on variables reflecting similar information, e.g. multiple leaf traits). The dissimilarity is computed by either an analytical approach or through iterations. The function borrows several arguments from `gowdis()`, with additional ones described below. This includes the option to consider fuzzy and dummy variables (e.g. multiple columns defining a single trait). 
 
 Let's first load functions. 
 
 ### Loading functions
-We will now open the package FD, which you should install on your computer, and the object "gawdis.R" which contains the function `gawdis`. Remember to have the file "gawdis.R" in your working directory!
+We will now load the package gawdis, which you should have previously installed on your computer (it is available on standard CRAN repository). The gawdis package includes the function `gawdis()` and already loads other packages, such as FD and GA among others"
 
 ```{r}
 library(gawdis)
 ```
 
 ### The Gower distance
-We will start now by looking what the function does, overall. To do this let's first look at the original function `gawdis` with the data `dummy$trait`, which includes invented data for few species and their traits, available in the FD package (gawdis source the FD package).
+We will start now by looking what the function does, overall. To do this let's first look at the original function `gawdis` with the data `dummy$trait`, which includes invented data for few species and their traits, available in the FD package (gawdis sources the FD package).
 
 ```{r}
 dummy$trait
@@ -230,9 +230,9 @@ tall<-as.data.frame(cbind(bodysize, carnivory, colors.fuzzy))
 tall
 ```
 
-The object `tall` includes 3 traits for 7 species, `bodysize` (quantitative), `carnivory` (binary/categorical) and colour. The last one is represented by 3 columns, one for each basic colour (yellow, red, blue). For example the first species (sp1), is red, so it gets 1 in the the 'red' column and 0 in the others. This type of variables, defined by multiple columns is called dummy variable, and in this specific case fuzzy coding, because the value in each column can be different from 0 and 1, with the sum over the 3 columns being equal to 1. For more information see (https://www.univie.ac.at/arctictraits/traitspublic_fuzzyCoding.php, https://stattrek.com/multiple-regression/dummy-variables.aspx). 
+The object `tall` includes 3 traits for 7 species, `bodysize` (quantitative), `carnivory` (binary/categorical) and color. The last one is represented by 3 columns, one for each basic color (yellow, red, blue). For example the first species (sp1), is red, so it gets 1 in the the 'red' column and 0 in the others. This type of variables, defined by multiple columns is called dummy variable, and in this specific case fuzzy coding, because the value in each column can be different from 0 and 1, with the sum over the 3 columns being equal to 1. For more information see (https://www.univie.ac.at/arctictraits/traitspublic_fuzzyCoding.php, https://stattrek.com/multiple-regression/dummy-variables.aspx). 
 
-We surely cannot apply `gowdis` to this type of matrices, because the function will "think" there is a total of 5 traits, since the matrix contains 5 columns, and will treat each of the 3 columns for colours as independent traits, resulting in a higher contribution of this single trait. Moreover the function gets a bit 'crazy' with this type of variables. Let's see why. We can use, to start with, the function only on the colours traits:
+We surely cannot apply `gowdis()` to this type of matrices, because the function will "think" there is a total of 5 traits, since the matrix contains 5 columns, and will treat each of the 3 columns for colors as independent traits, resulting in a higher contribution of this single trait. Moreover the function gets a bit 'crazy' with this type of variables. Let's see why. We can use, to start with, the function only on the colors traits:
 
 ```{r}
 round(gowdis(tall[, 3:5]), 3)
@@ -255,8 +255,8 @@ mean.dissim.all<-as.dist(apply(simplify2array(dall), c(1, 2), mean, na.rm=T), 2)
 round(mean.dissim.all, 3)
 ```
 
-This is all a bit time consuming to do it line by line. There is other function in the package 'ade4', i.e. the function `dist.ktab` (together with the associated functions `prep.fuzzy` and `ktab.list.df`). However this solution is quite time consuming as well, as it requires a number steps and coding lines (you can surely try, just in case). Ideally we can thus also solve this problem with the function `gawdis`, possibly in a simple way. The solution is obtained by defining all columns belonging to a given trait (like colors above) to a certain group, as we saw above and then setting the argument fuzzy=TRUE. Let's see this now.  
+This is all a bit time consuming to do it line by line. There is other function in the package 'ade4', i.e. the function `dist.ktab()` (together with the associated functions `prep.fuzzy()` and `ktab.list.df()`). However this solution is quite time consuming as well, as it requires a number steps and coding lines (you can surely try, just in case). Ideally we can thus also solve this problem with the function `gawdis()`, possibly in a simple way. The solution is obtained by defining all columns belonging to a given trait (like colors above) to a certain group, as we saw above and then setting the argument `fuzzy=c(2)` (`fuzzy` argument allows to specify which groups should be fuzzy coded, here these are only the last three columns in group 2). Let's see this now.  
 
 ```{r}
-gawdis(tall, w.type="equal", groups =c(1, 2, 3, 3, 3), fuzzy=TRUE)
+gawdis(tall, w.type="equal", groups =c(1, 1, 2, 2, 2), fuzzy=c(2))
 ```
