@@ -5,5 +5,5 @@ bibentry(bibtype = "Manual",
                     person("Jan", "Leps"),
                     person("Pavel", "Fibich")),
          year = 2021,
-         note = "Methods in Ecology and Evolution (under review)",
-         url = "https://github.com/pavel-fibich/gawdis")
+         note = "Methods in Ecology and Evolution",
+         url = "https://doi.org/10.1111/2041-210X.13537")

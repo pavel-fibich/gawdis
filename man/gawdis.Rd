@@ -96,7 +96,7 @@ attr(gaw.tall,"weights")
 
 }
 \references{
-de Bello, F. et al. (2021) Towards a more balanced combination of multiple traits when computing functional differences between species. Methods in Ecology and Evolution (under review).
+de Bello, F. et al. (2021) Towards a more balanced combination of multiple traits when computing functional differences between species. Methods in Ecology and Evolution, doi: https://doi.org/10.1111/2041-210X.13537.
 
 Gower, J. C. (1971) A general coefficient of similarity and some of its properties. Biometrics 27: 857-871.
 

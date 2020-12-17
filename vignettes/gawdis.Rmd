@@ -1,7 +1,7 @@
 ---
 title: "Guidelines for the function *gawdis*"
 author: "Francesco de Bello (fradebello@ext.uv.es), Zoltan Botta-Dukat, Pavel Fibich"
-date: "13.11.2020"
+date: "17.12.2020"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{gawdis}
@@ -143,7 +143,7 @@ head(tussock$trait[, 3:7])
 cor(tussock$trait[, 3:7], use = "complete")
 ```
 
-In the dataset there are 5 leaf traits, likely measured on the same leaves, and quite correlated between them. In this case we do suggest to create groups of traits, using the argument `groups`. Why it is so? the problem is that if many trait provide a similar information, actually all these leaf traits are very much correlated. So the information could become too prominent in the multi-trait dissimilarity. Let's see all this, with a step-by-step approach. Basically the same test can be found in the incoming publication de Bello et al. in Methods in Ecology and Evolution. 
+In the dataset there are 5 leaf traits, likely measured on the same leaves, and quite correlated between them. In this case we do suggest to create groups of traits, using the argument `groups`. Why it is so? the problem is that if many trait provide a similar information, actually all these leaf traits are very much correlated. So the information could become too prominent in the multi-trait dissimilarity. Let's see all this, with a step-by-step approach. Basically the same test can be found in the de Bello et al. (2021, Methods in Ecology and Evolution, doi: https://doi.org/10.1111/2041-210X.13537 ). 
 First we slightly reduce the number of traits, just for simplicity, and because the dataset included some very unbalanced categorical traits (with too few entries for a number of categories). Then we need to log-transform some of the quantitative traits, and previously we checked that height, seedmass and leafS were the one needing log-transformation. NOTE that, by the way, that if we do not use log-transformation is applied trait with abnormal trait distribution will have bigger contribution, simply because they have greater variance (see Pavoine et al. 2009 Oikos).   
 
 ```{r}
