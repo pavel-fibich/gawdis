@@ -5,5 +5,5 @@ bibentry(bibtype = "Manual",
                     person("Jan", "Leps"),
                     person("Pavel", "Fibich")),
          year = 2021,
-         note = "Methods in Ecology and Evolution",
+         note = "Methods in Ecology and Evolution 12: 443-448",
          url = "https://doi.org/10.1111/2041-210X.13537")

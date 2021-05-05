@@ -1,7 +1,7 @@
 gawdis
 ======
 
-**gawdis** is was designed in the manuscript *Towards a more balanced combination of multiple traits when computing functional differences between species* by Francesco de Bello, Zoltan Botta-Dukat, Jan Leps & Pavel Fibich (2021) Methods in Ecology and Evolution doi: <a href="https://doi.org/10.1111/2041-210X.13537">10.1111/2041-210X.13537</a>.
+**gawdis** is was designed in the manuscript *Towards a more balanced combination of multiple traits when computing functional differences between species* by Francesco de Bello, Zoltan Botta-Dukat, Jan Leps & Pavel Fibich (2021) Methods in Ecology and Evolution 12: 443-448. doi: <a href="https://doi.org/10.1111/2041-210X.13537">10.1111/2041-210X.13537</a>.
 
 **gawdis** R package provides 'gawdis()' function to produce multi-trait dissimilarity with more uniform contributions of different traits. The approach is based on minimizing the differences in the correlation between the dissimilarity of each trait, or groups of traits, and the multi-trait dissimilarity. This is done using either an analytic or a numerical solution, both available in the function.
 

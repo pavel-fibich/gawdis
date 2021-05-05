@@ -26,7 +26,7 @@
 #'
 #' @keywords gawdis gowdis
 #' @return  An object of class dist with the following attributes: Labels, Types (the variable types, where 'C' is continuous/numeric, 'O' is ordinal, 'B' is symmetric binary, 'A' is asymmetric binary, and 'N' is nominal), Size, Metric. Including attributes 1) “correls” with the correlations of each trait with the multi-trait dissimilarity, 2) “weights” for the weights of traits, 3) “group.correls” with weights of groups, 4)”components” with between species transformed distances, and 5) “cor.mat” with correlations between traits.
-#' @references  de Bello, F. et al. (2021) Towards a more balanced combination of multiple traits when computing functional differences between species. Methods in Ecology and Evolution, doi: https://doi.org/10.1111/2041-210X.13537.
+#' @references  de Bello, F. et al. (2021) Towards a more balanced combination of multiple traits when computing functional differences between species. Methods in Ecology and Evolution 12: 443-448, doi: https://doi.org/10.1111/2041-210X.13537.
 #'
 #' Gower, J. C. (1971) A general coefficient of similarity and some of its properties. Biometrics 27: 857-871.
 #'
@@ -336,6 +336,8 @@ gawdis <- function (x, W=NULL, asym.bin = NULL, ord = c("podani", "metric","clas
       for (dn in which(d.rawna!=p)) w.mat[dn, !is.na(d.raw[dn,]) ] <- w[!is.na(d.raw[dn,])] / sum(w[!is.na(d.raw[dn,])])
       res<-rowSums(d.raw*w.mat,na.rm=T)
       if ( (!is.null(fuzzy)) && (length(unique(groups))==1) && (unique(groups) %in% fuzzy) ) res <- res/max(res,na.rm=T)
+      # if all traits are NA, that NA should be returned
+      res <- ifelse (d.rawna == 0, NA,res)
     } else {
       # groups for equal and user must be solved separately
       #warning("separating groups")
