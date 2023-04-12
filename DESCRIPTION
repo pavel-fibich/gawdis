@@ -1,7 +1,7 @@
 Package: gawdis
 Type: Package
 Title: Multi-Trait Dissimilarity with more Uniform Contributions
-Version: 0.1.3
+Version: 0.1.4
 Authors@R: c(person("Francesco", "de Bello", role = "aut",
                     email = "fradebel@ext.uv.es"),
               person("Zoltan", "Botta-Dukat", role = "aut"),
