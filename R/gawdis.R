@@ -255,14 +255,17 @@ gawdis <- function (x, W=NULL, asym.bin = NULL, ord = c("podani", "metric","clas
                print ("Traits inside the group were not weighted - analytic.")
                group.gaw = gawdis(as.data.frame(xorig[, ii]), w.type="equal", groups=rep(i,length(ii)),groups.weight = F, fuzzy=fuzzy, silent = T )
              }
-             if ( is.null(d.raw2) ) {
-               d.raw2<-matrix(NA,nrow=nrow(d.raw),ncol=length(unique(groups)))
-               d.raw2[,k] <- c(group.gaw)
-             } else {
-               d.raw2[,k] <- c(group.gaw)
-             }
-             w<-c(w, attr(group.gaw,"weights") )
+           } else {
+             print ("Traits without the group were not weighted - analytic.")
+             group.gaw = gawdis(as.data.frame(xorig[, ii]), w.type="equal", groups=rep(i,length(ii)),groups.weight = F, fuzzy=fuzzy, silent = T )
            }
+           if ( is.null(d.raw2) ) {
+             d.raw2<-matrix(NA,nrow=nrow(d.raw),ncol=length(unique(groups)))
+             d.raw2[,k] <- c(group.gaw)
+           } else {
+             d.raw2[,k] <- c(group.gaw)
+           }
+           w<-c(w, attr(group.gaw,"weights") )
          }
          w<-w/sum(w)
 
