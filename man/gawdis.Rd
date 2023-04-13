@@ -96,7 +96,7 @@ attr(gaw.tall,"weights")
 
 }
 \references{
-de Bello, F. et al. (2021) Towards a more balanced combination of multiple traits when computing functional differences between species. Methods in Ecology and Evolution, doi: https://doi.org/10.1111/2041-210X.13537.
+de Bello, F. et al. (2021) Towards a more balanced combination of multiple traits when computing functional differences between species. Methods in Ecology and Evolution, doi: https://doi.org/10.1111/2041-210X.13537 .
 
 Gower, J. C. (1971) A general coefficient of similarity and some of its properties. Biometrics 27: 857-871.
 
@@ -106,7 +106,7 @@ Morrall, D. (2003) Ecological Applications of Genetic Algorithms. Springer, Berl
 
 Laliberté, E., and Legendre, P. (2010) A distance-based framework for measuring functional diversity from multiple traits. Ecology 91:299-305.
 
-Laliberté, E., Legendre, P., and Shipley, B. (2014). FD: measuring functional diversity from multiple traits, and other tools for functional ecology. R package version 1.0-12. https://cran.r-project.org/package=FD.
+Laliberté, E., Legendre, P., and Shipley, B. (2014). FD: measuring functional diversity from multiple traits, and other tools for functional ecology. R package version 1.0-12. https://cran.r-project.org/package=FD .
 }
 \seealso{
 \link[FD]{gowdis} from FD package.

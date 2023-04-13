@@ -5,18 +5,18 @@ gawdis
 
 **gawdis** R package provides 'gawdis()' function to produce multi-trait dissimilarity with more uniform contributions of different traits. The approach is based on minimizing the differences in the correlation between the dissimilarity of each trait, or groups of traits, and the multi-trait dissimilarity. This is done using either an analytic or a numerical solution, both available in the function.
 
-**gawdis** is available on CRAN https://cran.r-project.org/web/packages/gawdis you just need to
+**gawdis** is available on CRAN https://cran.r-project.org/web/packages/gawdis/ you just need to
 
 ```
 install.packages("gawdis")
 library("gawdis")
 ```
 
-and then run it similarly as 'gowdis()' from FD package (https://cran.r-project.org/web/packages/FD).
+and then run it similarly as 'gowdis()' from FD package ( https://cran.r-project.org/web/packages/FD/ ).
 
 Examples
 ======
-For nice examples see vignettes on CRAN https://cran.r-project.org/web/packages/gawdis or directly in R :
+For nice examples see vignettes on CRAN https://cran.r-project.org/web/packages/gawdis/ or directly in R :
 ```
   vignette("gawdis")
 ```
