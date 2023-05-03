@@ -339,8 +339,8 @@ gawdis <- function (x, W=NULL, asym.bin = NULL, ord = c("podani", "metric","clas
       for (dn in which(d.rawna!=p)) w.mat[dn, !is.na(d.raw[dn,]) ] <- w[!is.na(d.raw[dn,])] / sum(w[!is.na(d.raw[dn,])])
       res<-rowSums(d.raw*w.mat,na.rm=T)
       if ( (!is.null(fuzzy)) && (length(unique(groups))==1) && (unique(groups) %in% fuzzy) ) res <- res/max(res,na.rm=T)
-      # if all traits are NA, that NA should be returned
-      res <- ifelse (d.rawna == 0, NA,res)
+      # if all traits are NA, then NA should be returned
+      if ( w.type %in% c("analytic","optimized") ) res <- ifelse (d.rawna == 0, NA,res)
     } else {
       # groups for equal and user must be solved separately
       #warning("separating groups")
